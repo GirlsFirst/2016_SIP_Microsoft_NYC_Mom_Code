@@ -1,6 +1,6 @@
 import random
 import pygame
-
+ 
 from NEWOMG import Scroller
 from NEWOMG import Building
 pygame.init()
@@ -28,19 +28,55 @@ BACKGROUND_COLOR = (17, 9, 89)
 front_scroller = Scroller(SCREEN_WIDTH, 500, SCREEN_HEIGHT, FRONT_SCROLLER_COLOR, 3)
 middle_scroller = Scroller(SCREEN_WIDTH, 200, (SCREEN_HEIGHT - 50), MIDDLE_SCROLLER_COLOR, 2)
 back_scroller = Scroller(SCREEN_WIDTH, 20, (SCREEN_HEIGHT - 100), BACK_SCROLLER_COLOR, 1)
-backgroundim = pygame.image.load("sun.png").convert()
+backgroundim = pygame.image.load("galaxy.jpg").convert()
 
 xPosition = 400
-yPosition= 15
+yPosition = 15
 
 
+class girlSprite(pygame.sprite.Sprite):
+
+    def __init__(self, file_name):
+        super().__init__()
+        self.image = pygame.image.load(file_name).convert_alpha()
+        self.rect = self.image.get_rect()
+        
+    def playermove(self):
+        pygame.event.pumped()
+        key = pygame.key.get_pressed()
+        if key[pygame.K_Space]()
+            
+
+
+
+    def update(self):
+        for germ_sprite in girlSprite:
+            self.rect.x -=5 
+
+		
+sprite1 = girlSprite("girlstop.png")
+sprite2 = girlSprite("rungirl.png")
+sun_sprite = girlSprite("sun.png")
+baby_sprite = girlSprite("baby1.png")
+germ_sprite = girlSprite("germ.png")
+troll_sprite = girlSprite("evillegs.png")
+all_sprites_list = pygame.sprite.Group()
+
+all_sprites_list.add(sprite2)
+all_sprites_list.add(sun_sprite)
+all_sprites_list.add(baby_sprite)
+all_sprites_list.add(germ_sprite)
+all_sprites_list.add(troll_sprite)
+
+        
 while not done:   
    # --- Main event loop
     for event in pygame.event.get():
+        
         if event.type == pygame.QUIT:
             done = True
         
- 
+     
     # --- Game logic should go here
 
     # --- Screen-clearing code goes here
@@ -65,40 +101,24 @@ while not done:
     
     all_sprites_list.draw(screen)
 
-class girlSprite(pygame.sprite.Sprite):
+    #sprite1.rect.x = 50
+    #sprite1.rect.y = 500
 
-    def __init__(self, file_name):
-        super().__init__()
-        self.image = pygame.image.load(file_name).convert_alpha()
-        self.rect = self.image.get_rect()
-        
-    def playermove(self):
-        pygame.event.pumped()
-        key = pygame.key.get_pressed()
-        if key[pygame.K_Space]():
+    sprite2.rect.x = 30
+    sprite2.rect.y = 500
 
+    sun_sprite.rect.x = 30
+    sun_sprite.rect.y = 600
 
+    baby_sprite.rect.x = 700
+    baby_sprite.rect.y = 500
 
-    def update(self):
-        for germ_sprite in girlSprite:
-            self.rect.x -=5 
+    germ_sprite.rect.x = 220
+    germ_sprite.rect.y = 500
 
-		
-sprite1 = girlSprite("girlstop.png")
-sprite2 = girlSprite("rungirl.png")
-sun_sprite = girlSprite("sun.png")
-baby_sprite = girlSprite("baby1.png")
-germ_sprite = girlSprite("germ.png")
-troll_sprite = girlSprite("evillegs.png")
-all_sprites_list = pygame.sprite.Group()
+    troll_sprite.rect.x =500
+    troll_sprite.rect.y = 500
 
-all_sprites_list.add(sprite2)
-all_sprites_list.add(sun_sprite)
-all_sprites_list.add(baby_sprite)
-all_sprites_list.add(germ_sprite)
-all_sprites_list.add(troll_sprite)
-
-    
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
@@ -108,5 +128,4 @@ all_sprites_list.add(troll_sprite)
 # Close the window and quit.
 pygame.quit()
 exit() # Needed when using IDLE
-
 
