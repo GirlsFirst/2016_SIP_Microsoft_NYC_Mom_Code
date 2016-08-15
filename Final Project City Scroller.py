@@ -36,10 +36,14 @@ backgroundim = pygame.image.load("bg3.png").convert()
 xPosition = 400
 yPosition = 15
 
+
 all_sprites_list = pygame.sprite.Group()
 bad_sprites_list = pygame.sprite.Group()
 good_sprites_list = pygame.sprite.Group()
+envelope_sprites_list = pygame.sprite.Group()
+lives = 1
 
+sb_list = pygame.sprite.Group()
 class girlSprite(pygame.sprite.Sprite):
 
     def __init__(self, file_name, file_name2):
@@ -63,7 +67,7 @@ class girlSprite(pygame.sprite.Sprite):
     
     def playerjump(self):
         if (pygame.key.get_pressed()[pygame.K_SPACE] == 1):
-            self.rect.y = 300
+            self.rect.y = 150
         if (pygame.key.get_pressed()[pygame.K_SPACE] == 0 and self.rect.y != 500):
             self.rect.y = 450
             
@@ -108,7 +112,6 @@ def makeup():
         pacifier_sprite.rect.y = random.randrange(100, 450)
 
 
-        good_sprites_list.add(envelope_sprite)
         good_sprites_list.add(diaper_sprite)
         good_sprites_list.add(pacifier_sprite)
         bad_sprites_list.add(honey_sprite)
@@ -117,9 +120,10 @@ def makeup():
         all_sprites_list.add(germ_sprite)
         all_sprites_list.add(troll_sprite)
         all_sprites_list.add(honey_sprite)
-        all_sprites_list.add(envelope_sprite)
         all_sprites_list.add(diaper_sprite)
         all_sprites_list.add(pacifier_sprite)
+        envelope_sprites_list.add(envelope_sprite)
+        
 
 
         
@@ -128,10 +132,12 @@ def end():
     
     good_sprites_list.empty()
     all_sprites_list.empty()
-    bad_sprites_list.empty()       
+    bad_sprites_list.empty()
+    envelope_sprites_list.empty()
+
 
 lives = 3
-
+points = 0
 
 sprite1 = girlSprite("girlstop1.png", "rungirl.png")
 baby_sprite = girlSprite("baby1.png", "baby1.png")
@@ -139,7 +145,7 @@ scoreboard_sprite = girlSprite("scoreboard.png", "scoreflash.png")
 
 all_sprites_list.add(sprite1)
 all_sprites_list.add(baby_sprite)
-all_sprites_list.add(scoreboard_sprite)
+sb_list.add(scoreboard_sprite)
 
 
 
@@ -157,6 +163,14 @@ while not done:
         
         if event.type == pygame.QUIT:
             done = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a and restart:
+                lives = 3
+                points = 0
+                makeup()
+                restart = False
+
+            
     sprite1.playerjump()    
     bad_sprites_list.update()
     sprite1.animate()
@@ -165,10 +179,12 @@ while not done:
     sprite1.changesize(150, 150)
     scoreboard_sprite.changesize(300, 300)
     baby_sprite.changesize(150, 150)
-    
+    envelope_sprites_list.update()
+
+
     bad_sprites_hit_list = pygame.sprite.spritecollide(sprite1, bad_sprites_list, True)
     good_sprites_hit_list = pygame.sprite.spritecollide(sprite1, good_sprites_list, True)
-    
+    envelope_sprites_hit_list = pygame.sprite.spritecollide(sprite1, envelope_sprites_list, True)      
 
     
     # --- Game logic should go here
@@ -202,7 +218,7 @@ while not done:
 
 
     all_sprites_list.draw(screen)
-
+    sb_list.draw(screen)
     mom_code_tip0 = ["Figuring out what your baby is upset about is major guessing game(no pun intended).",
      "After having to guess if they are hunger,messy, or just want some attention another factor could be that your baby is gassy.",
      "When coming out of the womb babies are born with the Moro, or startle,reflex.",
@@ -213,16 +229,16 @@ while not done:
      "Skin-to-skin contact with your baby allows you and your baby to build a stronger bond.",
      "When making eye contact with your baby it will allow your baby to recognize your face and starts to build their memory.",
      "While many may think honey would be a good thing to feed to your newborn it is actually contains a bacteria that can germinate in a baby’s developing digestive system."
-   	 "When having a newborn to worry about be extra alert when driving if your daily routine changes.",
-   	 "Save yourself from the despair of buying a changing table it becomes virtually useless when your baby has to be changed outside the house.",
-   	 "Changing pads are more efficient than changing tables because you can take them everywhere.", 
-  	 "Wipe warmers are also something you can refrain from buying because they tend to dry out wipes faster.",
+     "When having a newborn to worry about be extra alert when driving if your daily routine changes.",
+     "Save yourself from the despair of buying a changing table it becomes virtually useless when your baby has to be changed outside the house.",
+     "Changing pads are more efficient than changing tables because you can take them everywhere.", 
+     "Wipe warmers are also something you can refrain from buying because they tend to dry out wipes faster.",
      "Stay away from expensive diaper bags because most bags don’t have baby friendly features.",
      "Your baby’s flaky skin could be caused by its layer of vernix being rubbed away and drying out when they are exposed to air.",
-		 "If your baby experiences excessive sneezing it’s due to your baby clearing their nasal and respiratory passages of congestion and airborne particles.",
+     "If your baby experiences excessive sneezing it’s due to your baby clearing their nasal and respiratory passages of congestion and airborne particles.",
      "If you seen your newborn has irregular breathing it’s because they are it normal for them to take slight pauses and then go through periods of rapid breathing.",
      "Touching your baby’s soft spot is not a big deal you’re not touching their brain but a thick protective  membrane.",
-		 "Babies  who are fed formula have less-frequent bowel movements which causes them to poop less."]
+     "Babies  who are fed formula have less-frequent bowel movements which causes them to poop less."]
 
     length = len(mom_code_tip0)
     random_number = random.randint(0, length -1)
@@ -233,6 +249,12 @@ while not done:
     score = font.render("Lives: "+ str(lives), True, BLACK)
     screen.blit(score, [600, 150])
 
+    tips = font.render("Score: " + str(points), True, BLUE)
+    screen.blit(tips, [600, 200])
+
+    if good_sprites_hit_list:
+        points +=1
+
     if bad_sprites_hit_list:
         lives -= 1
                 
@@ -240,6 +262,13 @@ while not done:
         end()
         game_over = font.render("Game Over", True, RED)
         screen.blit(game_over, [300, 200])
+        try_again = font.render("Play Again and Press A", True, RED)
+        screen.blit(try_again, [300, 350])
+        restart = True
+
+    if envelope_sprites_hit_list:
+        points +=1
+        
         
 
 
